@@ -6,15 +6,15 @@ import (
 
 type Role struct {
 	gorm.Model
-	Name        string
+	Name        string `gorm:"unique"`
 	Description string
 }
 
 type User struct {
 	gorm.Model
 	FullName string
-	Name     string
-	Email    string
+	Name     string `gorm:"unique"`
+	Email    string `gorm:"unique"`
 	Password string
 	Roles    []Role `gorm:"many2many:user_roles;"`
 }

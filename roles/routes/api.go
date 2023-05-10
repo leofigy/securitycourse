@@ -109,3 +109,44 @@ func Logout(c *gin.Context) {
 		"message": "bye!!!",
 	})
 }
+
+func AddUser(c *gin.Context) {
+	if valid, ok := c.Get("valid"); ok {
+		if !valid.(bool) {
+			log.Println("session not longer valid pal")
+			c.HTML(
+				http.StatusOK,
+				"login.html",
+				gin.H{},
+			)
+			return
+		}
+	}
+
+	session := sessions.Default(c)
+	// validations who's adding
+	username := session.Get("username")
+	user := model.User{}
+
+	db, err := helperGetDB(c)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "db-down",
+		})
+		return
+	}
+	db.Preload("Roles").Where("name = ?", username).First(&user)
+
+	isAdmin := len(user.Roles) > 0 && user.Roles[0].Name == "admin"
+
+	if user.Name == "" || !isAdmin {
+		log.Println("redirecting to forbidden")
+		c.Redirect(http.StatusMovedPermanently, "/forbidden")
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "IN CONSTRUCTION !!!",
+	})
+}

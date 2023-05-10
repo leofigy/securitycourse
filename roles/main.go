@@ -17,22 +17,6 @@ func main() {
 	persistence := model.NewPersistence("localdb", false, "")
 	handler, err := persistence.GetDB()
 
-	/*
-		role := model.Role{
-			Name:        "admin",
-			Description: "super powers",
-		}
-
-		user := model.User{
-			FullName: "Angel Figueroa",
-			Name:     "leofigy",
-			Email:    "angel.fig@email.com",
-			Password: "welcome1",
-			Roles:    []model.Role{role},
-		}*/
-
-	//handler.Create(&user)
-
 	if err != nil {
 		panic(err)
 	}
@@ -96,6 +80,7 @@ func main() {
 	r.POST("/admin", routes.Admin)
 	r.GET("/admin", routes.Admin)
 	r.GET("/ping", routes.Ping)
+	r.POST("/add_user", routes.AddUser)
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
