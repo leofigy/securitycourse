@@ -18,14 +18,14 @@
             <div class="field">
               <label class="label">Name</label>
               <div class="control">
-                <input class="input" type="text" placeholder="Text input">
+                <input class="input" type="text" placeholder="Text input" name="FullName">
               </div>
             </div>
             
             <div class="field">
               <label class="label">Username</label>
               <div class="control has-icons-left has-icons-right">
-                <input class="input is-success" type="text" placeholder="Text input" value="bulma">
+                <input class="input is-success" type="text" placeholder="Text input" value="bulma" name="username">
                 <span class="icon is-small is-left">
                   <i class="fas fa-user"></i>
                 </span>
@@ -39,7 +39,7 @@
             <div class="field">
               <label class="label">Email</label>
               <div class="control has-icons-left has-icons-right">
-                <input class="input is-danger" type="email" placeholder="Email input" value="hello@">
+                <input class="input is-danger" type="email" placeholder="Email input" value="hello@" name="email">
                 <span class="icon is-small is-left">
                   <i class="fas fa-envelope"></i>
                 </span>
@@ -54,7 +54,7 @@
               <label class="label">Role</label>
               <div class="control">
                 <div class="select">
-                  <select>
+                  <select name="role">
                     <option>admin</option>
                     <option>user</option>
                     <option>bot</option>
@@ -106,8 +106,8 @@
                 {{range .Users}}
                 <tr>
                       <td>{{.ID}}</td>
-                      <td>{{.FullName}}</td>
                       <td>{{.Name}}</td>
+                      <td>{{.FullName}}</td>
                       <td>{{.Email}}</td>
                   </tr>
                 {{end}}

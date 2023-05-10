@@ -146,7 +146,40 @@ func AddUser(c *gin.Context) {
 		return
 	}
 
+	newUsername := c.PostForm("username")
+	newPassword := c.PostForm("password")
+	newFullName := c.PostForm("FullName")
+	newEmail := c.PostForm("email")
+	newRole := c.PostForm("role")
+
+	role := model.Role{}
+
+	db.Where("name = ?", newRole).First(&role)
+
+	if role.Name == "" {
+		log.Println(role)
+		log.Println(newRole)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"ERROR": "BAD ROLE",
+		})
+		return
+	}
+
+	newUser := model.User{
+		FullName: newFullName,
+		Name:     newUsername,
+		Password: newPassword,
+		Email:    newEmail,
+		Roles:    []model.Role{role},
+	}
+
+	log.Println(newUser, newRole)
+	db.Create(&newUser)
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "IN CONSTRUCTION !!!",
 	})
+
+	// required params
+
 }
