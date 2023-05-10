@@ -12,15 +12,107 @@
 
     <div class="columns">
         <div class="column is-narrow">
-          <div class="box" style="width: 200px;">
-            <p class="title is-5">Narrow column</p>
-            <p class="subtitle">This column is only 200px wide.</p>
+          <div class="box" style="width: 300px;">
+            <p class="title is-5">Add user</p>
+            <div class="field">
+              <label class="label">Name</label>
+              <div class="control">
+                <input class="input" type="text" placeholder="Text input">
+              </div>
+            </div>
+            
+            <div class="field">
+              <label class="label">Username</label>
+              <div class="control has-icons-left has-icons-right">
+                <input class="input is-success" type="text" placeholder="Text input" value="bulma">
+                <span class="icon is-small is-left">
+                  <i class="fas fa-user"></i>
+                </span>
+                <span class="icon is-small is-right">
+                  <i class="fas fa-check"></i>
+                </span>
+              </div>
+              <p class="help is-success">Add the system user</p>
+            </div>
+            
+            <div class="field">
+              <label class="label">Email</label>
+              <div class="control has-icons-left has-icons-right">
+                <input class="input is-danger" type="email" placeholder="Email input" value="hello@">
+                <span class="icon is-small is-left">
+                  <i class="fas fa-envelope"></i>
+                </span>
+                <span class="icon is-small is-right">
+                  <i class="fas fa-exclamation-triangle"></i>
+                </span>
+              </div>
+              <p class="help is-success">Add your email</p>
+            </div>
+            
+            <div class="field">
+              <label class="label">Role</label>
+              <div class="control">
+                <div class="select">
+                  <select>
+                    <option>admin</option>
+                    <option>user</option>
+                    <option>bot</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label for="" class="label">Password</label>
+              <div class="control has-icons-left">
+                <input type="password" placeholder="*******" class="input" name="password" required>
+                <span class="icon is-small is-left">
+                  <i class="fa fa-lock"></i>
+                </span>
+              </div>
+            </div>
+            <div class="field is-grouped">
+              <div class="control">
+                <button class="button is-link">Submit</button>
+              </div>
+            </div>
           </div>
+          
+
+
         </div>
         <div class="column">
           <div class="box">
-            <p class="title is-5">Flexible column</p>
-            <p class="subtitle">This column will take up the remaining space available.</p>
+            <p class="title is-5">Available Users</p>          
+            <table class="table">
+              <thead>
+                <tr>
+                  <th><abbr title="Position">Pos</abbr></th>
+                  <th>Name</th>
+                  <th><abbr title="Played">FullName</abbr></th>
+                  <th><abbr title="Won">Email</abbr></th>
+                </tr>
+              </thead>
+              <tfoot>
+                <tr>
+                  <th><abbr title="Position">Pos</abbr></th>
+                  <th>Name</th>
+                  <th><abbr title="Played">FullName</abbr></th>
+                  <th><abbr title="Won">Email</abbr></th>
+                </tr>
+              </tfoot>
+              <tbody>
+                {{range .Users}}
+                <tr>
+                      <td>{{.ID}}</td>
+                      <td>{{.FullName}}</td>
+                      <td>{{.Name}}</td>
+                      <td>{{.Email}}</td>
+                  </tr>
+                {{end}}
+              </tbody>
+            </table>
+
+
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ package routes
 import (
 	"log"
 	"net/http"
+	"roles/model"
 
 	"github.com/gin-gonic/gin"
 )
@@ -35,10 +36,32 @@ func Admin(c *gin.Context) {
 		}
 	}
 
+	db, err := helperGetDB(c)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "db-down",
+		})
+		return
+	}
+
+	users := []model.User{}
+
+	result := db.Find(&users)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "db-down",
+		})
+		return
+	}
+
 	c.HTML(
 		http.StatusOK,
 		"admin.html",
-		gin.H{})
+		gin.H{
+			"Users": users,
+		})
 }
 
 func Forbidden(c *gin.Context) {

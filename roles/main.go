@@ -78,7 +78,7 @@ func main() {
 				log.Println("ACTIVE TIME ->", workingTime)
 
 				current := time.Now()
-				if current.After(workingTime.Add(time.Second * 10)) {
+				if current.After(workingTime.Add(time.Second * 300)) {
 					log.Println("WORKING TIME -> exceeded")
 					c.Set("valid", false)
 				}

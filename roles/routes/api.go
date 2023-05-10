@@ -57,6 +57,7 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "db-down",
 		})
+		return
 	}
 
 	username := c.PostForm("username")
@@ -107,5 +108,4 @@ func Logout(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "bye!!!",
 	})
-
 }
