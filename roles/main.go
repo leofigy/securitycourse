@@ -6,10 +6,9 @@ import (
 	"log"
 	"net/http"
 	"roles/model"
-	"time"
 
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-contrib/sessions/memstore"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -48,35 +47,43 @@ func main() {
 	)
 
 	// session definition
-	store := cookie.NewStore([]byte("secret"))
-	r.Use(sessions.Sessions("mysession", store))
+	store := memstore.NewStore([]byte("secret"))
 
 	r.Use(
 		func(c *gin.Context) {
-			log.Println("okay testing again pal")
 			uuid := uuid.New()
 			c.Set("uuid", uuid.String())
 			c.Set("db", persistence)
-			fmt.Printf("The request with uuid %s is started \n", uuid)
 			c.Next()
-			fmt.Printf("The request with uuid %s is served \n", uuid)
 		},
+		sessions.Sessions("mysession", store),
 	)
 
 	r.GET("/ping", func(c *gin.Context) {
 		session := sessions.Default(c)
+		log.Println("session id", session)
 
 		ok := session.Get("username")
 
 		log.Println("ACCESSING PING ...", ok)
-		/*
-			if ok == nil {
-				c.Redirect(http.StatusMovedPermanently, "/login")
-			}
-		*/
+
+		count := 0
+
+		v := session.Get("count")
+		if v == nil {
+			count = 0
+		} else {
+			count = v.(int)
+			count++
+		}
+		session.Set("count", count)
+		session.Save()
+
+		log.Println(count)
+
 		c.JSON(http.StatusOK, gin.H{
 			"message": session.Get("username"),
-			"valid":   session.Get("last_activity"),
+			"valid":   v,
 		})
 
 	})
@@ -101,6 +108,10 @@ func main() {
 	})
 
 	r.POST("/login", func(c *gin.Context) {
+		session := sessions.Default(c)
+
+		log.Println(session.Get("username"))
+
 		db, err := helperGetDB(c)
 
 		if err != nil {
@@ -127,11 +138,11 @@ func main() {
 			"message": "in work",
 		})
 
-		session := sessions.Default(c)
-
 		session.Set("username", user.Name)
-		session.Set("last_activity", time.Now())
 		session.Save()
+
+		log.Println("session id", session.ID())
+
 	})
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
