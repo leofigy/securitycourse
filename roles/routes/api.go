@@ -99,11 +99,13 @@ func Login(c *gin.Context) {
 func Logout(c *gin.Context) {
 	session := sessions.Default(c)
 	log.Println("TRYING TO GO OUTSIDE .....")
-	log.Println(session.Get("username"))
+	log.Println("current user ->", session.Get("username"))
 	log.Println("session id", session.ID())
+	session.Set("username", "") // this will mark the session as "written" and hopefully remove the username
 	session.Clear()
 	session.Save()
-	c.Redirect(
-		http.StatusMovedPermanently, "/",
-	)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "bye!!!",
+	})
+
 }
