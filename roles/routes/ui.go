@@ -25,7 +25,7 @@ func Admin(c *gin.Context) {
 
 	if valid, ok := c.Get("valid"); ok {
 		if !valid.(bool) {
-			log.Println("session not longer valid pal")
+			log.Println("ERROR-> ADMIN PAGE REDIRECTION, SESSION NOT VALID")
 			c.HTML(
 				http.StatusOK,
 				"login.html",

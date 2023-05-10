@@ -5,6 +5,7 @@ import (
 	"log"
 	"roles/model"
 	"roles/routes"
+	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/memstore"
@@ -63,6 +64,24 @@ func main() {
 			log.Println("ACTIVE USER ->", ok)
 			if ok == nil {
 				c.Set("valid", false)
+			} else {
+				log.Println("inspecting time")
+				lastUsage := session.Get("active")
+				if lastUsage == nil {
+					// invalidating session no last_usage info
+					c.Set("valid", false)
+				}
+
+				utime := lastUsage.(int64)
+
+				workingTime := time.Unix(utime, 0)
+				log.Println("ACTIVE TIME ->", workingTime)
+
+				current := time.Now()
+				if current.After(workingTime.Add(time.Second * 10)) {
+					log.Println("WORKING TIME -> exceeded")
+					c.Set("valid", false)
+				}
 			}
 			c.Next()
 		},
