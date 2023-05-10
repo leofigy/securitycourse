@@ -11,13 +11,21 @@ import (
 )
 
 func Ping(c *gin.Context) {
+
+	if valid, ok := c.Get("valid"); ok {
+		if !valid.(bool) {
+			log.Println("session not longer valid pal")
+			c.HTML(
+				http.StatusOK,
+				"login.html",
+				gin.H{},
+			)
+			return
+		}
+	}
+
 	session := sessions.Default(c)
 	log.Println("session id", session)
-
-	ok := session.Get("username")
-
-	log.Println("ACCESSING PING ...", ok)
-
 	count := 0
 
 	v := session.Get("count")
@@ -73,7 +81,7 @@ func Login(c *gin.Context) {
 		switch user.Roles[0].Name {
 		case "admin":
 			c.Redirect(
-				http.StatusMovedPermanently, "/workspace/admin",
+				http.StatusMovedPermanently, "/admin",
 			)
 			return
 		default:

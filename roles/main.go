@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"roles/model"
 	"roles/routes"
 
@@ -56,28 +55,16 @@ func main() {
 			c.Next()
 		},
 		sessions.Sessions("mysession", store),
-	)
-
-	wr := r.Group("/workspace")
-	wr.GET("/ping", routes.Ping)
-
-	wr.Use(
 		func(c *gin.Context) {
-			c.Set("db", persistence)
-			c.Next()
-		},
-		sessions.Sessions("mysession", store),
-		func(c *gin.Context) {
-			log.Println("validating session")
+			log.Println("***** VALIDATION ******")
 			session := sessions.Default(c)
-			log.Println("session id", session)
+			log.Println("*** CURRENT SESSION", session)
 			ok := session.Get("username")
-			log.Println("ACCESSING PING ...", ok)
+			log.Println("ACTIVE USER ->", ok)
 			if ok == nil {
-				log.Println("redirecting to forbidden")
-				c.Redirect(http.StatusMovedPermanently, "/forbidden")
-				return
+				c.Set("valid", false)
 			}
+			c.Next()
 		},
 	)
 
@@ -87,8 +74,9 @@ func main() {
 	r.POST("/forbidden", routes.Forbidden)
 	r.POST("/login", routes.Login)
 	r.GET("/logout", routes.Logout)
-	wr.POST("/admin", routes.Admin)
-	wr.GET("/admin", routes.Admin)
+	r.POST("/admin", routes.Admin)
+	r.GET("/admin", routes.Admin)
+	r.GET("/ping", routes.Ping)
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
