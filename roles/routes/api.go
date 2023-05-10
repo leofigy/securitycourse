@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"roles/model"
+	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -50,26 +51,51 @@ func Login(c *gin.Context) {
 		})
 	}
 
-	username := c.PostForm("uname")
-	password := c.PostForm("psw")
+	username := c.PostForm("username")
+	password := c.PostForm("password")
 
 	user := model.User{}
-	db.Where("name = ? AND password = ?", username, password).First(&user)
-
-	log.Println(len(user.Name))
+	db.Preload("Roles").Where("name = ? AND password = ?", username, password).First(&user)
 
 	if user.Name == "" {
-		log.Println("moving away pal")
+		log.Println("redirecting to forbidden")
 		c.Redirect(http.StatusMovedPermanently, "/forbidden")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "in work",
-	})
-
 	session.Set("username", user.Name)
+	session.Set("active", time.Now().Unix())
 	session.Save()
-
 	log.Println("session id", session.ID())
+
+	if len(user.Roles) > 0 {
+		// just grab the first role
+		switch user.Roles[0].Name {
+		case "admin":
+			c.Redirect(
+				http.StatusMovedPermanently, "/workspace/admin",
+			)
+			return
+		default:
+			c.JSON(http.StatusOK, gin.H{
+				"message": "in but not available function",
+			})
+		}
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "welcome!",
+		})
+	}
+}
+
+func Logout(c *gin.Context) {
+	session := sessions.Default(c)
+	log.Println("TRYING TO GO OUTSIDE .....")
+	log.Println(session.Get("username"))
+	log.Println("session id", session.ID())
+	session.Clear()
+	session.Save()
+	c.Redirect(
+		http.StatusMovedPermanently, "/",
+	)
 }
